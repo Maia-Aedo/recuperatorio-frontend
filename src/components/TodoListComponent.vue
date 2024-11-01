@@ -2,9 +2,12 @@
 // importar reactive
 // importar themeStore
 // importart taskStore
-
+import { useThemeStore } from '@/stores/themeStore'
+import { useTaskStore } from '@/stores/taskStore'
+import { reactive } from 'vue'
 
 // importamos el modelo Task
+import type { Task } from '@/models/taskModel'
 
 // iconos
 import { TrashIcon } from '@heroicons/vue/24/outline'
@@ -13,18 +16,20 @@ import { CheckCircleIcon as CompletedIcon } from '@heroicons/vue/24/solid'
 
 // definir variable para almacenar useThemeStore
 // definir variable reactiva pasando objeto themeStore
-
+const themeStore = useThemeStore()
+const theme = reactive(themeStore)
 
 // definir variable para almacenar useTaskStore
 // definir variable reactiva pasando objeto taskStore
-
+const taskStore = useTaskStore()
+const task = reactive(taskStore)
 
 
 </script>
 
 <template>
     <!-- div: usar v-bind:class para cambiar a modo oscuro -->
-    <div class="list-wrapper max-w rounded overflow-y-auto shadow-lg mt-10 p-4 transition ease-linear">
+    <div v-bind:class="theme.isDark ? 'dark' : ''" class="list-wrapper max-w rounded overflow-y-auto shadow-lg mt-10 p-4 transition ease-linear">
         
         <div class="px-6 py-4">
             <div class="font-bold text-xl mb-2">
@@ -33,12 +38,12 @@ import { CheckCircleIcon as CompletedIcon } from '@heroicons/vue/24/solid'
         </div>
 
         <!-- envoltura de la tarea, insertar v-for aca! -->
-        <div class="wrapper relative group border-black my-2 transition ease-linear">
+        <div v-for="Task in task" :key="task.id" class="wrapper relative group border-black my-2 transition ease-linear">
             <form v-on:submit.prevent>
                     <div class="absolute top-3 sm:top-4 left-5">
 
                     <!-- aca aplicar directiva @click para  cambiar estado de tarea -->
-                    <div class="relative">
+                    <div @click="task.updateTaskStatus()" class="relative">
                         <input
                         type="ckeckbox"
                         class="form-checkbox border rounded-full focus:ouline-none h-6 w-6 cursor-pointer transition ease-linear"
@@ -50,6 +55,7 @@ import { CheckCircleIcon as CompletedIcon } from '@heroicons/vue/24/solid'
 
                 <!-- usar v-model para pasar el texto de la tarea en input y usar v-bind:class para modo oscuro -->
                 <input
+                    v-bind:class="theme.isDark ? 'dark' : ''"
                     disabled
 
                     type="text"
@@ -58,7 +64,7 @@ import { CheckCircleIcon as CompletedIcon } from '@heroicons/vue/24/solid'
                 <div class="btns absolute right-0 top-0 py-2 sm:py-2.5 px-2 w-20 h-14 flex justify-around cursor-default" >
 
                     <!-- usar @click y llamar a funcion para borrar tarea -->
-                    <button class="p-1 cursor-pointer"><TrashIcon class="w-6 h-6 hover:text-red-500 "/></button> 
+                    <button @click="task.removeTask()" class="p-1 cursor-pointer"><TrashIcon class="w-6 h-6 hover:text-red-500 "/></button> 
                 </div>
 
                 <!-- indicador de tarea terminada, usar v-if segun corresponda -->

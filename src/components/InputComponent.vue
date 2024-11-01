@@ -4,6 +4,9 @@
 // importar taskStore
 // importar modelo de tarea
 import { reactive } from 'vue'
+import { useThemeStore } from '@/stores/themeStore'
+import { useTaskStore } from '@/stores/taskStore'
+import type { Task } from '@/models/taskModel';
 
 // iconos
 import { XMarkIcon, PlusCircleIcon } from '@heroicons/vue/24/outline'  
@@ -11,14 +14,16 @@ import { CheckCircleIcon as SolidCircleIcon } from '@heroicons/vue/24/solid'
 
 // definir variable para almacenar useThemeStore
 // definir variable reactiva pasando objeto themeStore
-
+const themeStore = useThemeStore();
+const theme = reactive(themeStore);
 
 // definir variable para almacenar useTaskStore
 // definir variable reactiva pasando objeto tasksStore
-
+const taskStore = useTaskStore();
+const task = reactive(taskStore)
 
 // una vez importado el modelo Task reemplazar any con el mismo
-const newTask: any = {
+const newTask: Task = {
   id:  0,
   tarea:  '',
   completada: false
@@ -35,7 +40,7 @@ function makeItComplete(){
 // funcion para guardar tarea, debera pasar variable reactiveTask al metodo
 // en TaskStore
 function saveTask() {
-  //store.addTask(reactiveTask)
+  task.addTask(reactiveTask)
 }
 
 </script>
@@ -50,7 +55,7 @@ function saveTask() {
         />
         <!-- usar directiva v-if para mostrar si es tarea completa -->
         <!-- agregar directiva @click para llamar al metodo para completar tarea -->
-        <SolidCircleIcon class="h-100 w-100 absolute left-0 top-0 text-green-500"/>
+        <SolidCircleIcon v-if="task.status === true" @click="makeItComplete()" class="h-100 w-100 absolute left-0 top-0 text-green-500"/>
       </div>
     </div>
 
@@ -60,17 +65,17 @@ function saveTask() {
       <!-- input: usar v-bind para definir si es modo oscuro -->
       <!-- usar v-model para pasar los datos de la nueva tarea -->
       <input
-
+        v-bind:class="theme.isDark ? 'dark' : ''" 
         type="text"
         placeholder="Escribe una nueva tarea"
         class="sm:text-base overflow-ellipsis w-full focus:outline-none py-4 sm:py-4.5 pr-8 pl-14 sm:pl-16 cursor-pointer transition ease-linear"
       />
 
       <!-- div: usar v-bind para definir si es modo oscuro -->
-      <div class="btns absolute right-0 top-0 py-2 sm:py-2.5 px-2 w-20 h-14 flex justify-around cursor-default transition ease-linear" >
+      <div v-bind:class="theme.isDark ? 'dark' : ''" class="btns absolute right-0 top-0 py-2 sm:py-2.5 px-2 w-20 h-14 flex justify-around cursor-default transition ease-linear" >
         <button  class="p-1 cursor-pointer">
           <!-- usar @click para usar metodo de guardar tareas -->
-          <PlusCircleIcon class="w-6 h-6 hover:text-green-600"/>
+          <PlusCircleIcon @click="saveTask()" class="w-6 h-6 hover:text-green-600"/>
         </button class="p-1 cursor-pointer">
         <button >
           <XMarkIcon class="w-6 h-6 hover:text-red-500 "/>

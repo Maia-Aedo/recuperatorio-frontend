@@ -1,42 +1,45 @@
 <script setup lang="ts">
 // importar reactive
 // importart useThemeStore
+import { useThemeStore } from '@/stores/themeStore';
+import { reactive } from 'vue'
 
 // iconos
 import { MoonIcon, SunIcon, LinkIcon } from '@heroicons/vue/24/solid'
 
 // instanciar useThemeStore
 // crear variable reactiva con objeto useStore
-
+const themeStore = useThemeStore();
+const theme = reactive(themeStore)
 
 </script>
 
 <template>
   <!-- usar directiva v-bind:class para asinar clase class si isDark en el store es true -->
-  <div class="wrapper transition ease-linear">
+  <div v-bind:class="theme.isDark ? 'dark' : ''" class="wrapper transition ease-linear">
     <div class="btn-wrapper">
       <div class="toggle-btn flex items-center justify-center w-full my-4">
         <label for="toggle" class="flex items-center justify-center cursor-pointer">
           <div class="relative">
             <!-- usar directiva @click para ejecutar el metodo para cambiar de dark a light o viceversa -->
-            <input type="checkbox" id="toggle" class="sr-only"/>
+            <input @click="theme.changeMode()" type="checkbox" id="toggle" class="sr-only"/>
             <div class="block bg-gray-600 w-14 h-8 rounded-full"></div>
             <div
               class="dot absolute left-1 top-1 bg-black w-6 h-6 flex items-center justify-center rounded-full transition">
               <!-- usar directiva v-if  para mostrar el icono de luna o sol usando isDark como referencia -->
-              <MoonIcon class="w-4 h-4 text-white" />
-              <SunIcon class="w-full h-full text-yellow-500 p-1" />
+              <MoonIcon v-if="theme.isDark === true"class="w-4 h-4 text-white" />
+              <SunIcon v-if="theme.isDark === false" class="w-full h-full text-yellow-500 p-1" />
             </div>
           </div>
 
           <!-- cambiar usar v-bind:class y atributo mode del ThemeState para cambiar el texto -->
-          <div class="label-text ml-2 font-medium">
-            Modo </div>
+          <div v-bind:class="theme.isDark ? 'dark Mode' : 'light Mode'" class="label-text ml-2 font-medium">
+            {{ theme.mode }}</div>
         </label>
       </div>
     </div>
     <!-- usar directiva v-bind:class para asinar clase class si isDark en el store es true -->
-    <div class="img min-h-screen flex flex-col items-center transition"></div>
+    <div v-bind:class="theme.isDark ? 'dark' : ''" class="img min-h-screen flex flex-col items-center transition" ></div>
     <div class="todo flex-1 lg:w-2/3 xl:w-2/5 w-full px-7">
       <RouterView />
     </div>
